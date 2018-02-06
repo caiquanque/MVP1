@@ -2,10 +2,6 @@ package com.example.thongdt.mvp1.Presenter.DangNhap;
 
 import com.example.thongdt.mvp1.View.DangNhap.ViewXuLyDangNhap;
 
-/**
- * Created by thong.dt on 30/01/2018.
- */
-
 public class PresenterLogicXuLyDangNhap implements PresenterImpXuLyDangNhap {
 
     ViewXuLyDangNhap viewXuLyDangNhap;

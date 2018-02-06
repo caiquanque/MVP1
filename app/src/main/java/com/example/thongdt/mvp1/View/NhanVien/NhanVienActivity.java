@@ -12,13 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import com.example.thongdt.mvp1.Model.Local.NhanVien;
 import com.example.thongdt.mvp1.R;
 import com.example.thongdt.mvp1.util.ImagePool;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -45,7 +42,8 @@ public class NhanVienActivity extends AppCompatActivity implements NhanVienAdapt
     Button btnThem;
     @BindView(R.id.recyler_view)
     RecyclerView recycler_view;
-    //  List<NhanVien> nhanViens;
+    boolean isEdit = false;
+    NhanVien nhanVienEdit;
 
     //initView
     public void initView() {
@@ -61,36 +59,43 @@ public class NhanVienActivity extends AppCompatActivity implements NhanVienAdapt
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @OnClick(R.id.btn)
     public void btnThem() {
-
         String ten = edtThemTen.getText().toString().trim();
         String matKhau = edtThemMatKhau.getText().toString().trim();
-        String imagePath = ImagePool.getImage();
+        if (isEdit) {
+            nhanVienEdit.setNhanVienTen(ten);
+            nhanVienEdit.setNhanVienMatKhau(matKhau);
+            nhanVienEdit.save();
+            nhanVienAdapter.resetNhanView(NhanVien.getAll());
+            isEdit = false;
+            Toast.makeText(this, "Cap nhat thanh cong !", Toast.LENGTH_SHORT).show();
+
+        } else {
+            String imagePath = ImagePool.getImage();
+
+            if (TextUtils.isEmpty(ten)) {
+                edtThemTen.requestFocus();
+                Toast.makeText(this, "Nhap ten", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (TextUtils.isEmpty(matKhau)) {
+                edtThemMatKhau.requestFocus();
+                Toast.makeText(this, "Nhap mat khau", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
 
-        if (TextUtils.isEmpty(ten)) {
-            edtThemTen.requestFocus();
-            Toast.makeText(this, "Nhap ten", Toast.LENGTH_SHORT).show();
-            return;
+            NhanVien nhanVien1 = new NhanVien(ten, matKhau, imagePath);
+            nhanVien1.save();
+            // or update a NV
+            if (nhanVienAdapter != null) {
+                nhanVienAdapter.addNhanVien(nhanVien1);
+                nhanVienAdapter.notifyDataSetChanged();
+            }
         }
-        if (TextUtils.isEmpty(matKhau)) {
-            edtThemMatKhau.requestFocus();
-            Toast.makeText(this, "Nhap mat khau", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        NhanVien nhanVien1 = new NhanVien(ten, matKhau, imagePath);
-        nhanVien1.save();
-
-        edtThemTen.setText("");
-        edtThemMatKhau.setText("");
-        btnThem.setText(R.string.add);
+        edtThemTen.setText(null);
+        edtThemMatKhau.setText(null);
         edtThemTen.requestFocus();
-
-        // or update a NV
-        if (nhanVienAdapter != null) {
-            nhanVienAdapter.addNhanVien(nhanVien1);
-            nhanVienAdapter.notifyDataSetChanged();
-        }
     }
 
     public void startPickImageFromGa() {
@@ -110,18 +115,15 @@ public class NhanVienActivity extends AppCompatActivity implements NhanVienAdapt
         Toast.makeText(this, "Xoa thanh cong !", Toast.LENGTH_SHORT).show();
     }
 
-
     @Override
     public void edit(NhanVien nvToUpdate) {
-        nvToUpdate.save();
-       /* positionEdit = position;
-        edt_hinh.setText(nhanViens.get(position).getNhanVienHinh());
-        edt_ten.setText(nhanViens.get(position).getNhanVienTen());
-        edt_mat_khau.setText(nhanViens.get(position).getNhanVienMatKhau());
-        edt_ten.requestFocus();*/
+        if(nvToUpdate.getId() == null) return;
+        nhanVienEdit = nvToUpdate;
+        if(!isEdit){
+            edtThemTen.setText(nvToUpdate.getNhanVienTen());
+            edtThemMatKhau.setText(nvToUpdate.getNhanVienMatKhau());
+            isEdit = true;
+        }
+
     }
-
-
-
-
 }

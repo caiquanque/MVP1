@@ -10,15 +10,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.thongdt.mvp1.Model.Local.NhanVien;
 import com.example.thongdt.mvp1.R;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,17 +28,12 @@ public class NhanVienAdapter extends RecyclerView.Adapter<NhanVienAdapter.ViewHo
 
     public interface AdapterNhanVienListener {
         void del(NhanVien Nv);
-
         void edit(NhanVien vn);
     }
 
     List<NhanVien> nhanViens;
     Context context;
     private AdapterNhanVienListener listener;
-    private int positionEdit = -1;
-    private EditText edt_ten;
-    private EditText edt_mat_khau;
-    private EditText edt_hinh;
 
     public NhanVienAdapter(List<NhanVien> nhanViens, Context context, AdapterNhanVienListener listener) {
         this.nhanViens = nhanViens;
@@ -59,6 +50,7 @@ public class NhanVienAdapter extends RecyclerView.Adapter<NhanVienAdapter.ViewHo
 
     public void resetNhanView(List<NhanVien> newNhanviens) {
         this.nhanViens = newNhanviens;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -88,8 +80,6 @@ public class NhanVienAdapter extends RecyclerView.Adapter<NhanVienAdapter.ViewHo
         return false;
     }
 
-    //@Override
-
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.tv_id)
@@ -106,7 +96,6 @@ public class NhanVienAdapter extends RecyclerView.Adapter<NhanVienAdapter.ViewHo
             ButterKnife.bind(this, itemView);
         }
 
-
         @OnClick(R.id.btn_menu)
         void showPopupMenu(View v) {
             PopupMenu popupMenu = new PopupMenu(context, v);
@@ -116,7 +105,6 @@ public class NhanVienAdapter extends RecyclerView.Adapter<NhanVienAdapter.ViewHo
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.menu_xoa:
-                            // del(getAdapterPosition());
                             if (listener != null) {
                                 listener.del(nhanViens.get(getAdapterPosition()));
                             }
@@ -125,7 +113,6 @@ public class NhanVienAdapter extends RecyclerView.Adapter<NhanVienAdapter.ViewHo
                             if (listener != null) {
                                 listener.edit(nhanViens.get(getAdapterPosition()));
                             }
-                            //edit(getAdapterPosition());
                             break;
                     }
                     return true;
@@ -134,5 +121,4 @@ public class NhanVienAdapter extends RecyclerView.Adapter<NhanVienAdapter.ViewHo
             popupMenu.show();
         }
     }
-
 }
